@@ -49,34 +49,34 @@ func (r *PlatformBindingResource) GetSchema(ctx context.Context) (tfsdk.Schema, 
 		Attributes: map[string]tfsdk.Attribute{
 			"id": {
 				Computed:            true,
-				MarkdownDescription: "Example identifier",
+				MarkdownDescription: "Platform Binding id",
 				PlanModifiers: tfsdk.AttributePlanModifiers{
 					resource.UseStateForUnknown(),
 				},
 				Type: types.StringType,
 			},
 			"cluster_id": {
-				MarkdownDescription: "Example configurable attribute",
+				MarkdownDescription: "Cluster id",
 				Required:            true,
 				Type:                types.StringType,
 			},
 			"platform_config_id": {
-				MarkdownDescription: "Example configurable attribute",
+				MarkdownDescription: "Platform Config id",
 				Required:            true,
 				Type:                types.StringType,
 			},
 			"platform_id": {
-				MarkdownDescription: "Example configurable attribute",
+				MarkdownDescription: "Platform id",
 				Required:            true,
 				Type:                types.StringType,
 			},
 			"platform_version": {
-				MarkdownDescription: "Example configurable attribute",
+				MarkdownDescription: "Platform Version",
 				Required:            true,
 				Type:                types.StringType,
 			},
 			"status": {
-				MarkdownDescription: "Example configurable attribute",
+				MarkdownDescription: "Platform Binding status, one of `Pending`, `Succeeded`, `Failed`, `Error`",
 				Computed:            true,
 				Type:                types.StringType,
 			},

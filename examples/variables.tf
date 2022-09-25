@@ -2,11 +2,11 @@ variable "username" {
   type = string
 }
 variable "password" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "cluster_token" {
-  type = string
+  type      = string
   sensitive = true
 }
 variable "cluster_ca" {

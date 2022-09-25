@@ -51,40 +51,40 @@ func (r *ClusterResource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Dia
 		Attributes: map[string]tfsdk.Attribute{
 			"id": {
 				Computed:            true,
-				MarkdownDescription: "Example identifier",
+				MarkdownDescription: "Cluster id",
 				PlanModifiers: tfsdk.AttributePlanModifiers{
 					resource.UseStateForUnknown(),
 				},
 				Type: types.StringType,
 			},
 			"name": {
-				MarkdownDescription: "Example configurable attribute",
+				MarkdownDescription: "Cluster name, should be unique across clusters",
 				Required:            true,
 				Type:                types.StringType,
 			},
 			"token": {
-				MarkdownDescription: "Example configurable attribute",
+				MarkdownDescription: "guku service account token",
 				Required:            true,
 				Type:                types.StringType,
 				Sensitive:           true,
 			},
 			"api_version": {
-				MarkdownDescription: "Example configurable attribute",
+				MarkdownDescription: "Kubernetes API version as <MAJOR>.<MINOR>",
 				Required:            true,
 				Type:                types.StringType,
 			},
 			"ca": {
-				MarkdownDescription: "Example configurable attribute",
+				MarkdownDescription: "Kubernetes API server CA, base64 encoded",
 				Optional:            true,
 				Type:                types.StringType,
 			},
 			"server": {
-				MarkdownDescription: "Example configurable attribute",
+				MarkdownDescription: "Kubernetes API server endpoint",
 				Optional:            true,
 				Type:                types.StringType,
 			},
 			"context": {
-				MarkdownDescription: "Example configurable attribute",
+				MarkdownDescription: "Additional JSON cluster context",
 				Optional:            true,
 				Type:                types.StringType,
 			},

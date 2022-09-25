@@ -66,47 +66,47 @@ func (d *PlatformDataSource) GetSchema(ctx context.Context) (tfsdk.Schema, diag.
 
 		Attributes: map[string]tfsdk.Attribute{
 			"platform_id": {
-				MarkdownDescription: "Example identifier",
+				MarkdownDescription: "Platform id",
 				Type:                types.StringType,
 				Required:            true,
 			},
 			"platform_version": {
-				MarkdownDescription: "Example identifier",
+				MarkdownDescription: "Platform Version",
 				Type:                types.StringType,
 				Required:            true,
 			},
 			"name": {
-				MarkdownDescription: "Example identifier",
+				MarkdownDescription: "Platform name",
 				Type:                types.StringType,
 				Computed:            true,
 			},
 			"description": {
-				MarkdownDescription: "Example identifier",
+				MarkdownDescription: "Platform description",
 				Type:                types.StringType,
 				Computed:            true,
 			},
 			"cataloged_date": {
-				MarkdownDescription: "Example identifier",
+				MarkdownDescription: "The date this platform was release",
 				Type:                types.StringType,
 				Computed:            true,
 			},
 			"max_api_version": {
-				MarkdownDescription: "Example identifier",
+				MarkdownDescription: "Maximum compatible Kubernetes API version",
 				Type:                types.StringType,
 				Computed:            true,
 			},
 			"min_api_version": {
-				MarkdownDescription: "Example identifier",
+				MarkdownDescription: "Minimum compatible Kubernetes API version",
 				Type:                types.StringType,
 				Computed:            true,
 			},
 			"services": {
-				MarkdownDescription: "Example identifier",
+				MarkdownDescription: "List of services managed by this platform",
 				Type:                types.MapType{ElemType: types.ObjectType{AttrTypes: PlatformServiceModelAttrTypes}},
 				Computed:            true,
 			},
 			"configs": {
-				MarkdownDescription: "Example identifier",
+				MarkdownDescription: "List of config sets that can be used to configure this platform",
 				Type:                types.MapType{ElemType: types.ObjectType{AttrTypes: PlatformConfigModelAttrTypes}},
 				Computed:            true,
 			},
