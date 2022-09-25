@@ -2,39 +2,44 @@ package provider
 
 import (
 	"context"
-	"net/http"
 
+	"github.com/devopzilla/guku-client-go"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/diag"
 	"github.com/hashicorp/terraform-plugin-framework/provider"
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 	"github.com/hashicorp/terraform-plugin-framework/tfsdk"
 	"github.com/hashicorp/terraform-plugin-framework/types"
+	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// Ensure ScaffoldingProvider satisfies various provider interfaces.
-var _ provider.Provider = &ScaffoldingProvider{}
-var _ provider.ProviderWithMetadata = &ScaffoldingProvider{}
+// Ensure GukuProvider satisfies various provider interfaces.
+var _ provider.Provider = &GukuProvider{}
+var _ provider.ProviderWithMetadata = &GukuProvider{}
 
-// ScaffoldingProvider defines the provider implementation.
-type ScaffoldingProvider struct {
+const DEFAULT_ENDPOINT = "https://ztvgrcfy5bcvra2jmlfhsjw2ve.appsync-api.eu-north-1.amazonaws.com/graphql"
+
+// GukuProvider defines the provider implementation.
+type GukuProvider struct {
 	// version is set to the provider version on release, "dev" when the
 	// provider is built and ran locally, and "test" when running acceptance
 	// testing.
 	version string
 }
 
-// ScaffoldingProviderModel describes the provider data model.
-type ScaffoldingProviderModel struct {
+// GukuProviderModel describes the provider data model.
+type GukuProviderModel struct {
 	Endpoint types.String `tfsdk:"endpoint"`
+	Username types.String `tfsdk:"username"`
+	Password types.String `tfsdk:"password"`
 }
 
-func (p *ScaffoldingProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "scaffolding"
+func (p *GukuProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "guku"
 	resp.Version = p.version
 }
 
-func (p *ScaffoldingProvider) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
+func (p *GukuProvider) GetSchema(ctx context.Context) (tfsdk.Schema, diag.Diagnostics) {
 	return tfsdk.Schema{
 		Attributes: map[string]tfsdk.Attribute{
 			"endpoint": {
@@ -42,12 +47,23 @@ func (p *ScaffoldingProvider) GetSchema(ctx context.Context) (tfsdk.Schema, diag
 				Optional:            true,
 				Type:                types.StringType,
 			},
+			"username": {
+				MarkdownDescription: "Example provider attribute",
+				Required:            true,
+				Type:                types.StringType,
+			},
+			"password": {
+				MarkdownDescription: "Example provider attribute",
+				Required:            true,
+				Type:                types.StringType,
+				Sensitive:           true,
+			},
 		},
 	}, nil
 }
 
-func (p *ScaffoldingProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
-	var data ScaffoldingProviderModel
+func (p *GukuProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+	var data GukuProviderModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -55,30 +71,59 @@ func (p *ScaffoldingProvider) Configure(ctx context.Context, req provider.Config
 		return
 	}
 
-	// Configuration values are now available.
-	// if data.Endpoint.IsNull() { /* ... */ }
+	if data.Endpoint.IsNull() {
+		data.Endpoint = types.String{Value: DEFAULT_ENDPOINT}
+		// resp.Diagnostics.AddError(
+		// 	"Unable to find Endpoint",
+		// 	"Endpoint cannot be empty",
+		// )
+		// return
+	}
+	if data.Username.IsNull() {
+		resp.Diagnostics.AddError(
+			"Unable to find Username",
+			"Username cannot be empty",
+		)
+		return
+	}
+	if data.Password.IsNull() {
+		resp.Diagnostics.AddError(
+			"Unable to find Password",
+			"Password cannot be empty",
+		)
+		return
+	}
 
-	// Example client configuration for data sources and resources
-	client := http.DefaultClient
+	client, err := guku.NewClient(context.TODO(), data.Endpoint.Value, data.Username.Value, data.Password.Value)
+	tflog.Info(ctx, data.Username.Value)
+	if err != nil {
+		resp.Diagnostics.AddError(
+			"Unable to create client",
+			"Unable to create guku client:\n\n"+err.Error(),
+		)
+		return
+	}
+
 	resp.DataSourceData = client
 	resp.ResourceData = client
 }
 
-func (p *ScaffoldingProvider) Resources(ctx context.Context) []func() resource.Resource {
+func (p *GukuProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{
-		NewExampleResource,
+		NewClusterResource,
+		NewPlatformBindingResource,
 	}
 }
 
-func (p *ScaffoldingProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+func (p *GukuProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
-		NewExampleDataSource,
+		NewPlatformDataSource,
 	}
 }
 
 func New(version string) func() provider.Provider {
 	return func() provider.Provider {
-		return &ScaffoldingProvider{
+		return &GukuProvider{
 			version: version,
 		}
 	}
